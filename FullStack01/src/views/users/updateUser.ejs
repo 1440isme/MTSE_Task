@@ -1,0 +1,29 @@
+<%- include('../partials/header', { title: 'Cập nhật user' }); %>
+<% if (typeof error !== 'undefined' && error) { %>
+<div class="alert alert-danger"><%= error %></div>
+<% } %>
+<h1 class="h3 mb-4">Cập nhật người dùng</h1>
+<div class="row">
+    <div class="col-md-8">
+        <form action="/put-crud" method="post" class="bg-white p-4 rounded shadow-sm">
+            <input type="hidden" name="id" value="<%= data.id %>">
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="firstName">Họ</label>
+                    <input type="text" class="form-control" id="firstName" name="firstName" value="<%= data.firstName %>" required>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="lastName">Tên</label>
+                    <input type="text" class="form-control" id="lastName" name="lastName" value="<%= data.lastName %>" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="address">Địa chỉ</label>
+                <input type="text" class="form-control" id="address" name="address" placeholder="Địa chỉ" value="<%= data.address || '' %>">
+            </div>
+            <button type="submit" class="btn btn-primary">Cập nhật</button>
+            <a href="/get-crud" class="btn btn-link">Hủy</a>
+        </form>
+    </div>
+</div>
+<%- include('../partials/footer'); %>

@@ -1,0 +1,37 @@
+<%- include('partials/header', { title: 'Trang chủ' }); %>
+<div class="jumbotron bg-white shadow-sm">
+    <h1 class="display-5">Quản lý người dùng</h1>
+    <p class="lead">Ứng dụng CRUD mẫu với Express, Sequelize và MySQL.</p>
+    <hr class="my-4">
+    <p>Hiện có <strong><%= users.length %></strong> người dùng trong hệ thống.</p>
+    <a class="btn btn-primary btn-lg" href="/crud" role="button">Tạo người dùng mới</a>
+    <a class="btn btn-outline-secondary btn-lg" href="/get-crud" role="button">Xem danh sách</a>
+</div>
+<% if (users.length) { %>
+<div class="card shadow-sm">
+    <div class="card-header">5 user mới nhất</div>
+    <div class="card-body p-0">
+        <table class="table table-striped table-hover mb-0">
+            <thead class="thead-light">
+                <tr>
+                    <th>Email</th>
+                    <th>Họ</th>
+                    <th>Tên</th>
+                    <th>Địa chỉ</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% users.slice(0, 5).forEach(function(u) { %>
+                    <tr>
+                        <td><%= u.email %></td>
+                        <td><%= u.firstName %></td>
+                        <td><%= u.lastName %></td>
+                        <td><%= u.address || '—' %></td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    </div>
+</div>
+<% } %>
+<%- include('partials/footer'); %>
