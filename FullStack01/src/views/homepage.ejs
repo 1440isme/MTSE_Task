@@ -1,37 +1,246 @@
 <%- include('partials/header', { title: 'Trang chủ' }); %>
-<div class="jumbotron bg-white shadow-sm">
-    <h1 class="display-5">Quản lý người dùng</h1>
-    <p class="lead">Ứng dụng CRUD mẫu với Express, Sequelize và MySQL.</p>
-    <hr class="my-4">
-    <p>Hiện có <strong><%= users.length %></strong> người dùng trong hệ thống.</p>
-    <a class="btn btn-primary btn-lg" href="/crud" role="button">Tạo người dùng mới</a>
-    <a class="btn btn-outline-secondary btn-lg" href="/get-crud" role="button">Xem danh sách</a>
-</div>
-<% if (users.length) { %>
-<div class="card shadow-sm">
-    <div class="card-header">5 user mới nhất</div>
-    <div class="card-body p-0">
-        <table class="table table-striped table-hover mb-0">
-            <thead class="thead-light">
-                <tr>
-                    <th>Email</th>
-                    <th>Họ</th>
-                    <th>Tên</th>
-                    <th>Địa chỉ</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% users.slice(0, 5).forEach(function(u) { %>
-                    <tr>
-                        <td><%= u.email %></td>
-                        <td><%= u.firstName %></td>
-                        <td><%= u.lastName %></td>
-                        <td><%= u.address || '—' %></td>
-                    </tr>
-                <% }); %>
-            </tbody>
-        </table>
+<style>
+    .hero-gradient {
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    }
+    .floating {
+        animation: floating 3s ease-in-out infinite;
+    }
+    @keyframes floating {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+    }
+    .pulse-glow {
+        animation: pulse-glow 2s ease-in-out infinite;
+    }
+    @keyframes pulse-glow {
+        0%, 100% { box-shadow: 0 0 20px rgba(13, 110, 253, 0.3); }
+        50% { box-shadow: 0 0 40px rgba(13, 110, 253, 0.6); }
+    }
+    .stat-card {
+        transition: all 0.3s ease;
+    }
+    .stat-card:hover {
+        transform: translateY(-5px);
+    }
+    .user-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 600;
+        font-size: 14px;
+    }
+    .glass-card {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .shimmer {
+        background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+        background-size: 200% 100%;
+        animation: shimmer 1.5s infinite;
+    }
+    @keyframes shimmer {
+        0% { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+    }
+    .btn-neon {
+        box-shadow: 0 0 10px rgba(13, 110, 253, 0.5);
+        transition: all 0.3s ease;
+    }
+    .btn-neon:hover {
+        box-shadow: 0 0 25px rgba(13, 110, 253, 0.8);
+        transform: scale(1.02);
+    }
+    .feature-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 16px;
+        background: linear-gradient(135deg, rgba(13, 110, 253, 0.1) 0%, rgba(79, 70, 229, 0.1) 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+    }
+</style>
+
+<!-- Hero Section -->
+<section class="hero-gradient rounded-4 p-4 p-md-5 mb-4 text-white position-relative overflow-hidden">
+    <div class="position-absolute top-0 end-0 p-4 opacity-10">
+        <svg width="200" height="200" viewBox="0 0 200 200" fill="white">
+            <circle cx="100" cy="100" r="80" fill="currentColor"/>
+            <circle cx="100" cy="100" r="60" fill="currentColor" opacity="0.5"/>
+            <circle cx="100" cy="100" r="40" fill="currentColor" opacity="0.3"/>
+        </svg>
     </div>
-</div>
-<% } %>
+    <div class="position-absolute bottom-0 start-0 p-4 opacity-10">
+        <svg width="150" height="150" viewBox="0 0 150 150" fill="white">
+            <rect width="150" height="150" rx="30" fill="currentColor"/>
+        </svg>
+    </div>
+    
+    <div class="row align-items-center position-relative">
+        <div class="col-lg-7">
+            <span class="badge badge-light text-primary px-3 py-2 mb-3">✨ Dashboard</span>
+            <h1 class="h2 font-weight-bold mb-3">Quản lý người dùng</h1>
+            <p class="mb-4" style="opacity: 0.9; font-size: 1.1rem;">Ứng dụng CRUD mẫu với Express, Sequelize và MySQL. Quản lý dữ liệu dễ dàng, nhanh chóng và trực quan.</p>
+            <div class="d-flex flex-wrap gap-3">
+                <a class="btn btn-light btn-lg btn-neon" href="/crud">
+                    <i class="fas fa-plus mr-2"></i>Tạo người dùng mới
+                </a>
+                <a class="btn btn-outline-light btn-lg" href="/get-crud">
+                    <i class="fas fa-list mr-2"></i>Xem danh sách
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-5 mt-4 mt-lg-0">
+            <div class="row g-3">
+                <div class="col-6">
+                    <div class="glass-card rounded-3 p-3 text-center stat-card">
+                        <div class="feature-icon mx-auto mb-2">
+                            <i class="fas fa-users text-primary"></i>
+                        </div>
+                        <h3 class="h4 font-weight-bold mb-1"><%= users.length %></h3>
+                        <p class="mb-0 small" style="opacity: 0.8;">Tổng người dùng</p>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="glass-card rounded-3 p-3 text-center stat-card">
+                        <div class="feature-icon mx-auto mb-2">
+                            <i class="fas fa-check-circle text-success"></i>
+                        </div>
+                        <h3 class="h4 font-weight-bold mb-1"><%= users.length > 0 ? 'Active' : '—' %></h3>
+                        <p class="mb-0 small" style="opacity: 0.8;">Trạng thái</p>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="glass-card rounded-3 p-3 text-center stat-card">
+                        <div class="feature-icon mx-auto mb-2">
+                            <i class="fas fa-database text-warning"></i>
+                        </div>
+                        <h3 class="h4 font-weight-bold mb-1">MySQL</h3>
+                        <p class="mb-0 small" style="opacity: 0.8;">Database</p>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="glass-card rounded-3 p-3 text-center stat-card">
+                        <div class="feature-icon mx-auto mb-2">
+                            <i class="fas fa-server text-info"></i>
+                        </div>
+                        <h3 class="h4 font-weight-bold mb-1">Express</h3>
+                        <p class="mb-0 small" style="opacity: 0.8;">Backend</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- User Table Section -->
+<section>
+    <% if (users.length) { %>
+        <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+            <div class="card-header bg-white border-0 py-3 px-4 d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="h5 font-weight-bold mb-1">Người dùng gần đây</h2>
+                    <p class="text-muted mb-0 small">Danh sách 5 người dùng mới nhất</p>
+                </div>
+                <a href="/get-crud" class="btn btn-outline-primary btn-sm">Xem tất cả <i class="fas fa-arrow-right ml-1"></i></a>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="border-0 px-4">Người dùng</th>
+                            <th class="border-0">Họ</th>
+                            <th class="border-0">Tên</th>
+                            <th class="border-0">Địa chỉ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% users.slice(0, 5).forEach(function(u) { %>
+                            <tr>
+                                <td class="px-4 align-middle">
+                                    <div class="d-flex align-items-center">
+                                        <div class="user-avatar mr-3">
+                                            <%= (u.firstName || '').charAt(0).toUpperCase() %><%= (u.lastName || '').charAt(0).toUpperCase() %>
+                                        </div>
+                                        <strong><%= u.email %></strong>
+                                    </div>
+                                </td>
+                                <td class="align-middle"><%= u.firstName %></td>
+                                <td class="align-middle"><%= u.lastName %></td>
+                                <td class="align-middle text-muted"><%= u.address || '—' %></td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    <% } else { %>
+        <div class="card border-0 shadow-lg rounded-4">
+            <div class="card-body py-5 text-center">
+                <div class="mb-4">
+                    <div class="feature-icon mx-auto" style="width: 80px; height: 80px; border-radius: 50%;">
+                        <i class="fas fa-user-plus text-primary" style="font-size: 32px;"></i>
+                    </div>
+                </div>
+                <h2 class="h4 mb-3">Chưa có người dùng nào</h2>
+                <p class="text-muted mb-4">Bắt đầu bằng cách tạo người dùng đầu tiên để quản lý dữ liệu.</p>
+                <a class="btn btn-primary btn-lg btn-neon" href="/crud">Tạo người dùng ngay</a>
+            </div>
+        </div>
+    <% } %>
+</section>
+
+<!-- Features Section -->
+<section class="mt-4">
+    <div class="row g-3">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100 rounded-4 p-3 stat-card">
+                <div class="d-flex align-items-center">
+                    <div class="feature-icon mr-3">
+                        <i class="fas fa-bolt text-primary"></i>
+                    </div>
+                    <div>
+                        <h3 class="h6 font-weight-bold mb-1">Nhanh chóng</h3>
+                        <p class="text-muted mb-0 small">Tạo và quản lý dữ liệu trong tích tắc</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100 rounded-4 p-3 stat-card">
+                <div class="d-flex align-items-center">
+                    <div class="feature-icon mr-3">
+                        <i class="fas fa-shield-alt text-success"></i>
+                    </div>
+                    <div>
+                        <h3 class="h6 font-weight-bold mb-1">Bảo mật</h3>
+                        <p class="text-muted mb-0 small">Dữ liệu được bảo vệ an toàn</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100 rounded-4 p-3 stat-card">
+                <div class="d-flex align-items-center">
+                    <div class="feature-icon mr-3">
+                        <i class="fas fa-mobile-alt text-warning"></i>
+                    </div>
+                    <div>
+                        <h3 class="h6 font-weight-bold mb-1">Responsive</h3>
+                        <p class="text-muted mb-0 small">Hoạt động trên mọi thiết bị</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
 <%- include('partials/footer'); %>
