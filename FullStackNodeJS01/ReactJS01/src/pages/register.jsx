@@ -1,0 +1,183 @@
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { registerApi } from "../util/api";
+import { 
+    User, 
+    Mail, 
+    Lock, 
+    ArrowRight, 
+    Loader2,
+    BookOpen,
+    ShieldCheck,
+    CheckCircle2
+} from "lucide-react";
+import { motion } from "framer-motion";
+import { message } from "antd";
+
+const RegisterPage = () => {
+    const navigate = useNavigate();
+    const [messageApi, contextHolder] = message.useMessage();
+    
+    const [loading, setLoading] = useState(false);
+    const [form, setForm] = useState({
+        name: "",
+        email: "",
+        password: "",
+        confirmPassword: ""
+    });
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setForm(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        
+        if (form.password !== form.confirmPassword) {
+            messageApi.error("Mật khẩu xác nhận không khớp!");
+            return;
+        }
+
+        setLoading(true);
+        try {
+            const res = await registerApi({
+                name: form.name,
+                email: form.email,
+                password: form.password
+            });
+
+            if (res.data?.EC === 0) {
+                messageApi.success("Đăng ký thành công! Đang chuyển hướng...");
+                setTimeout(() => {
+                    navigate("/login");
+                }, 2000);
+            } else {
+                messageApi.error(res.data?.message || "Đăng ký thất bại");
+            }
+        } catch (err) {
+            const msg = err.response?.data?.message || "Đã có lỗi xảy ra. Vui lòng thử lại.";
+            messageApi.error(msg);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <div className="relative min-h-screen flex items-center justify-center p-6 py-12">
+            {contextHolder}
+            <div className="bg-mesh" />
+
+            <motion.div 
+                initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                className="w-full max-w-lg"
+            >
+                <div className="glass rounded-[40px] p-10 lg:p-12 shadow-2xl shadow-indigo-100 border border-white/50">
+                    <div className="flex flex-col items-center mb-10">
+                        <Link to="/" className="mb-6 group">
+                            <div className="w-16 h-16 bg-indigo-600 rounded-3xl flex items-center justify-center text-white shadow-xl shadow-indigo-200 group-hover:rotate-12 transition-transform duration-300">
+                                <BookOpen size={32} />
+                            </div>
+                        </Link>
+                        <h1 className="text-3xl font-black text-slate-900 tracking-tight mb-2">Tạo tài khoản</h1>
+                        <p className="text-slate-400 font-medium text-center">Bắt đầu hành trình khám phá tri thức của bạn ngay hôm nay</p>
+                    </div>
+
+                    <form className="grid grid-cols-1 sm:grid-cols-2 gap-6" onSubmit={handleSubmit}>
+                        <div className="sm:col-span-2 space-y-2">
+                            <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Họ và tên</label>
+                            <div className="relative group">
+                                <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-indigo-600 transition-colors" size={18} />
+                                <input
+                                    type="text"
+                                    name="name"
+                                    className="w-full bg-slate-50 border-none rounded-2xl pl-12 pr-6 py-4 text-sm font-bold focus:ring-2 focus:ring-indigo-500/20 transition-all placeholder:text-slate-300"
+                                    placeholder="Nguyễn Văn A"
+                                    required
+                                    value={form.name}
+                                    onChange={handleChange}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="sm:col-span-2 space-y-2">
+                            <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Email</label>
+                            <div className="relative group">
+                                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-indigo-600 transition-colors" size={18} />
+                                <input
+                                    type="email"
+                                    name="email"
+                                    className="w-full bg-slate-50 border-none rounded-2xl pl-12 pr-6 py-4 text-sm font-bold focus:ring-2 focus:ring-indigo-500/20 transition-all placeholder:text-slate-300"
+                                    placeholder="your@email.com"
+                                    required
+                                    value={form.email}
+                                    onChange={handleChange}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Mật khẩu</label>
+                            <div className="relative group">
+                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-indigo-600 transition-colors" size={18} />
+                                <input
+                                    type="password"
+                                    name="password"
+                                    className="w-full bg-slate-50 border-none rounded-2xl pl-12 pr-6 py-4 text-sm font-bold focus:ring-2 focus:ring-indigo-500/20 transition-all placeholder:text-slate-300"
+                                    placeholder="••••••••"
+                                    required
+                                    value={form.password}
+                                    onChange={handleChange}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Xác nhận</label>
+                            <div className="relative group">
+                                <CheckCircle2 className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-indigo-600 transition-colors" size={18} />
+                                <input
+                                    type="password"
+                                    name="confirmPassword"
+                                    className="w-full bg-slate-50 border-none rounded-2xl pl-12 pr-6 py-4 text-sm font-bold focus:ring-2 focus:ring-indigo-500/20 transition-all placeholder:text-slate-300"
+                                    placeholder="••••••••"
+                                    required
+                                    value={form.confirmPassword}
+                                    onChange={handleChange}
+                                />
+                            </div>
+                        </div>
+
+                        <button 
+                            type="submit" 
+                            disabled={loading}
+                            className="sm:col-span-2 w-full bg-indigo-600 text-white py-4 rounded-2xl font-black shadow-xl shadow-indigo-100 hover:bg-indigo-700 hover:-translate-y-1 active:translate-y-0 transition-all flex items-center justify-center gap-3 disabled:opacity-50 mt-4"
+                        >
+                            {loading ? <Loader2 className="animate-spin" size={20} /> : <>Tạo tài khoản <ArrowRight size={20} /></>}
+                        </button>
+                    </form>
+
+                    <div className="mt-10 pt-8 border-t border-slate-100 text-center">
+                        <p className="text-sm font-bold text-slate-400">
+                            Đã có tài khoản? <Link to="/login" className="text-indigo-600 hover:text-indigo-700 ml-1">Đăng nhập ngay</Link>
+                        </p>
+                    </div>
+                </div>
+                
+                <div className="mt-8 flex items-center justify-center gap-6 text-slate-400">
+                    <div className="flex items-center gap-2">
+                        <ShieldCheck size={16} className="text-emerald-500" />
+                        <span className="text-[10px] font-black uppercase tracking-widest">Bảo mật tuyệt đối</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <CheckCircle2 size={16} className="text-indigo-500" />
+                        <span className="text-[10px] font-black uppercase tracking-widest">Đăng ký miễn phí</span>
+                    </div>
+                </div>
+            </motion.div>
+        </div>
+    );
+};
+
+export default RegisterPage;

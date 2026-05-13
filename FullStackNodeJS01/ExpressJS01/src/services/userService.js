@@ -12,7 +12,7 @@ const createUserService = async (name, email, password) => {
         }
         const hashPassword = await bcrypt.hash(password, saltRounds);
         const newUser = new User({
-            userName: name,
+            name: name,
             email,
             password: hashPassword,
             role: "USER"
@@ -48,9 +48,15 @@ const loginService = async (email, password) => {
                 )
                 return {
                     EC: 0,
+                    success: true,
+                    token: accessToken,
                     user: {
                         email: user.email,
-                        name: user.name
+                        name: user.name, 
+                        role: user.role,
+                        firstName: user.firstName,
+                        lastName: user.lastName,
+                        avatar: user.avatar
                     }
                 };
             }
@@ -76,6 +82,29 @@ const getUserService = async () => {
 
     }
 }
+const updateMyProfileService = async (email, data) => {
+    try {
+        const user = await User.findOneAndUpdate(
+            { email },
+            { $set: data },
+            { new: true }
+        ).select("-password");
+
+        if (!user) {
+            return { EC: 1, EM: "User not found" };
+        }
+
+        return {
+            EC: 0,
+            success: true,
+            user: user
+        };
+    } catch (error) {
+        console.log("updateMyProfileService Error: ", error);
+        return { error: error.message };
+    }
+}
+
 module.exports = {
-    createUserService, loginService, getUserService
+    createUserService, loginService, getUserService, updateMyProfileService
 }

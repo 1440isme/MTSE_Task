@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const apiRoutes = require("./routes/api");
+const authRoutes = require("./routes/auth");
 const connection = require("./config/database");
 const { getHomepage } = require("./controllers/homeController");
 const cors = require("cors");
@@ -12,7 +13,8 @@ app.use(express.urlencoded({ extended: true }))
 const webAPI = express.Router();
 webAPI.get("/", getHomepage);
 app.use('/', webAPI);
-app.use('/v1/api', apiRoutes);
+app.use('/api', apiRoutes);
+app.use('/auth', authRoutes);
 (async () => {
     try {
         await connection();
